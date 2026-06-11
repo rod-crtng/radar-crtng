@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#131A15">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>RADAR · CRTNG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#131A15; --surface:#1A221C; --surface-2:#202A23;
+    --neon:#00F050; --neon-dim:rgba(0,240,80,.14);
+    --ink:#E8EFEA; --muted:#8A968E; --faint:#5A655E;
+    --hair:rgba(232,239,234,.08);
+    --amber:#FFB454; --amber-dim:rgba(255,180,84,.12);
+    --blue:#7AB8FF; --blue-dim:rgba(122,184,255,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;min-height:100vh;padding:0 20px calc(60px + env(safe-area-inset-bottom))}
+  .wrap{max-width:1100px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;padding:calc(24px + env(safe-area-inset-top)) 0 20px;border-bottom:1px solid var(--hair)}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .sq{width:11px;height:11px;background:var(--neon)}
+  .brand .name{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.42em;font-size:14px}
+  .brand .name span{color:var(--neon)}
+  .doc-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right}
+  .hero{padding:34px 0 6px}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.32em;color:var(--neon);text-transform:uppercase}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(30px,5vw,48px);letter-spacing:-.01em;margin-top:8px}
+  h1 .g{color:var(--neon)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:28px}
+  .kpi{background:var(--bg);padding:16px 18px}
+  .kpi .v{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;line-height:1}
+  .kpi .v.green{color:var(--neon)} .kpi .v.amber{color:var(--amber)}
+  .kpi .l{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+  .week{margin-top:32px;border:1px solid var(--hair);border-radius:10px;background:var(--surface);padding:16px 16px 12px}
+  .week-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .week-head .t{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--neon);text-transform:uppercase}
+  .week-head .sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint)}
+  .week-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+  .day{border-radius:6px;padding:7px 4px 9px;background:var(--bg);border:1px solid transparent;min-height:72px;display:flex;flex-direction:column;gap:5px}
+  .day.today{border-color:var(--neon);background:var(--neon-dim)}
+  .day .d{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.04em;text-align:center}
+  .day.today .d{color:var(--neon);font-weight:700}
+  .ev{font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.3;border-radius:4px;padding:3px 4px;color:var(--bg);font-weight:700;background:var(--neon);overflow-wrap:break-word}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 18px}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.08em;background:none;border:1px solid var(--hair);color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,color .15s}
+  .chip:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .chip.on{border-color:var(--neon);color:var(--neon);background:var(--neon-dim)}
+  .chip .n{opacity:.6;margin-left:5px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .card{background:var(--surface);border:1px solid var(--hair);border-radius:10px;padding:18px 18px 14px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:13px}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--st-color,var(--neon))}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .card h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .card .tipo{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:3px}
+  .badge{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:999px;color:var(--st-color);background:var(--st-bg)}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--st-color)}
+  .badge .dot.pulse{animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .fm{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.85;background:var(--bg);border:1px solid var(--hair);border-radius:8px;padding:11px 13px}
+  .fm .k{color:var(--faint)} .fm .v{color:var(--ink)}
+  .fm .v.hl{color:var(--neon)} .fm .v.warn{color:var(--amber)}
+  .prog{display:flex;flex-direction:column;gap:6px}
+  .prog .row{display:flex;justify-content:space-between;align-items:baseline}
+  .prog .lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .prog .frac{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--st-color)}
+  .bar{height:6px;border-radius:99px;background:var(--bg);border:1px solid var(--hair);overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--st-color);border-radius:99px;transition:width .6s ease}
+  .card-foot{display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.04em;gap:8px}
+  .card-foot .stale{color:var(--amber)}
+  .sec{margin-top:48px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+  .sec-head h3{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:600}
+  .sec-head h3 .g{color:var(--neon)}
+  .sec-head .rule{flex:1;height:1px;background:var(--hair)}
+  .tl{list-style:none}
+  .tl li{display:grid;grid-template-columns:118px 1fr auto;gap:16px;align-items:baseline;padding:13px 4px;border-bottom:1px solid var(--hair)}
+  .tl .when{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--neon)}
+  .tl .when.soon{color:var(--amber)}
+  .tl .what{font-size:13.5px}
+  .tl .who{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  .tl li.empty{grid-template-columns:1fr;color:var(--faint);font-size:13px}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.08em}
+  @media(max-width:680px){
+    .week-grid{grid-template-columns:repeat(4,1fr)}
+    .tl li{grid-template-columns:88px 1fr}
+    .tl .who{grid-column:2;justify-self:start}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="sq"></div>
+      <div class="name">C R T N G<span>.</span></div>
+    </div>
+    <div class="doc-meta" id="now"></div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Gestão visual · fonte: vault</div>
+    <h1>Radar de <span class="g">frentes</span></h1>
+  </section>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="week">
+    <div class="week-head">
+      <span class="t">Semana</span>
+      <span class="sub" id="week-range"></span>
+    </div>
+    <div class="week-grid" id="week"></div>
+  </section>
+
+  <div class="filters" id="filters" role="group" aria-label="Filtrar por status"></div>
+
+  <section class="grid" id="grid"></section>
+
+  <section class="sec">
+    <div class="sec-head"><h3>Linha de <span class="g">prazos</span></h3><div class="rule"></div></div>
+    <ul class="tl" id="timeline"></ul>
+  </section>
+
+  <footer>
+    <span>CRTNG · RADAR · USO INTERNO · READ-ONLY</span>
+    <span id="gen-stamp"></span>
+  </footer>
+</div>
+
+<script>
+const GERADO = new Date('2026-06-11T17:05:29');
+const HOJE = new Date(GERADO); HOJE.setHours(12,0,0,0);
+const FRENTES = [
+  {
+    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "TRM Energy",
+    "status": "ativo",
+    "fase": "Ciclo Junho · Mês 2/12 · saldo 56/60 créditos",
+    "proxima_acao": "Entregar podcast Marina (SLA 17/06) · Indaiatuba 12/06 remanejada (aguardando nova data TRM)",
+    "prazo": "2026-06-17",
+    "atualizado": "2026-06-11",
+    "progresso": {
+      "atual": 2,
+      "total": 12,
+      "label": "contrato anual"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/EVENTUAIS/MURILO_FELIX/DRA_SANDRA/VISAO_GERAL.md",
+    "tipo": "eventual",
+    "cliente": "Dra. Sandra Cabral (via Murilo Félix)",
+    "status": "ativo",
+    "fase": "Campanha de lançamento · V6 em pós · 6/9 entregues",
+    "proxima_acao": "Remarcar V8 via Murilo (café externo) · pós do V6",
+    "prazo": "",
+    "atualizado": "2026-06-11",
+    "progresso": {
+      "atual": 6,
+      "total": 9,
+      "label": "vídeos entregues"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/IGAPO/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "Igapó Marcenaria",
+    "status": "ativo",
+    "fase": "Mês 3/6 (Junho) · rollover formal pendente",
+    "proxima_acao": "Remarcar captação Willian 2ª casa (Villas do Golf) — 11/06 cancelada por chuva",
+    "prazo": "",
+    "atualizado": "2026-06-11",
+    "progresso": {
+      "atual": 3,
+      "total": 6,
+      "label": "contrato"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/HARAS_ENTREVERO/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "Haras Entrevero",
+    "status": "pausado",
+    "fase": "Abr–Mai entregue (10 peças) · planejamento travado",
+    "proxima_acao": "Reunião Gabriel — resolver pagamento M1 + destravar planejamento",
+    "prazo": "",
+    "atualizado": "2026-06-11",
+    "progresso": {
+      "atual": 2,
+      "total": 9,
+      "label": "contrato"
+    }
+  }
+];
+
+const ST = {
+  ativo:      {color:'var(--neon)',  bg:'var(--neon-dim)'},
+  pausado:    {color:'var(--amber)', bg:'var(--amber-dim)'},
+  aguardando: {color:'var(--blue)',  bg:'var(--blue-dim)'},
+  encerrado:  {color:'var(--faint)', bg:'rgba(90,101,94,.12)'}
+};
+const stOf = s => ST[s] || ST.ativo;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+const dias = iso => Math.round((new Date(iso+'T12:00:00') - HOJE)/86400000);
+const rel = iso => {
+  const n = dias(iso);
+  if (n < 0)  return {t:`atrasado ${-n}d`, soon:true};
+  if (n === 0) return {t:'hoje', soon:true};
+  if (n === 1) return {t:'amanhã', soon:true};
+  return {t:`em ${n} dias`, soon:n<=2};
+};
+
+function kpis(){
+  const at = FRENTES.filter(f=>f.status==='ativo').length;
+  const pa = FRENTES.filter(f=>f.status==='pausado').length;
+  const semana = FRENTES.filter(f=>f.prazo && dias(f.prazo)>=0 && dias(f.prazo)<=7).length;
+  const stale = FRENTES.filter(f=>f.atualizado && (HOJE-new Date(f.atualizado+'T12:00:00'))/86400000 > 7).length;
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="v green">${at}</div><div class="l">frentes ativas</div></div>
+    <div class="kpi"><div class="v amber">${pa}</div><div class="l">pausadas</div></div>
+    <div class="kpi"><div class="v">${semana}</div><div class="l">prazos · próx. 7 dias</div></div>
+    <div class="kpi"><div class="v ${stale? 'amber':''}">${stale}</div><div class="l">arquivos &gt;7d sem update</div></div>`;
+}
+
+function week(){
+  const DIAS = ['dom','seg','ter','qua','qui','sex','sáb'];
+  const cells = [];
+  const fim = new Date(HOJE); fim.setDate(fim.getDate()+7);
+  document.getElementById('week-range').textContent = fmt(HOJE)+' — '+fmt(fim);
+  for(let i=0;i<8;i++){
+    const d = new Date(HOJE); d.setDate(d.getDate()+i);
+    const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const evs = FRENTES.filter(f=>f.prazo===iso).map(f=>{
+      const nome = esc(f.cliente.split(' ')[0].replace('Dra.','Sandra'));
+      return `<div class="ev" title="${esc(f.proxima_acao)}">${nome}</div>`;
+    }).join('');
+    cells.push(`<div class="day ${i===0?'today':''}">
+      <div class="d">${DIAS[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}</div>${evs}
+    </div>`);
+  }
+  document.getElementById('week').innerHTML = cells.join('');
+}
+
+let filtro = 'todos';
+function filters(){
+  const counts = {todos: FRENTES.length};
+  FRENTES.forEach(f=>counts[f.status]=(counts[f.status]||0)+1);
+  const order = ['todos','ativo','pausado','aguardando','encerrado'].filter(s=>counts[s]);
+  document.getElementById('filters').innerHTML = order.map(s=>
+    `<button class="chip ${s===filtro?'on':''}" data-s="${s}">${s}<span class="n">${counts[s]}</span></button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{filtro=b.dataset.s;filters();grid();});
+}
+
+function fmRow(k,v,cls=''){
+  return `<div><span class="k">${k}:</span> <span class="v ${cls}">${v||'—'}</span></div>`;
+}
+function grid(){
+  const list = FRENTES.filter(f=>filtro==='todos'||f.status===filtro);
+  document.getElementById('grid').innerHTML = list.map(f=>{
+    const st = stOf(f.status);
+    const p = f.prazo ? rel(f.prazo) : null;
+    const upd = f.atualizado ? Math.round((HOJE-new Date(f.atualizado+'T12:00:00'))/86400000) : null;
+    let progHtml = '';
+    if (f.progresso && f.progresso.total > 0){
+      const pct = Math.min(100, Math.round(f.progresso.atual/f.progresso.total*100));
+      progHtml = `<div class="prog">
+        <div class="row">
+          <span class="lbl">${esc(f.progresso.label)}</span>
+          <span class="frac">${f.progresso.atual}/${f.progresso.total} · ${pct}%</span>
+        </div>
+        <div class="bar"><i style="width:${pct}%"></i></div>
+      </div>`;
+    }
+    return `
+    <article class="card" style="--st-color:${st.color};--st-bg:${st.bg}">
+      <div class="card-head">
+        <div>
+          <h2>${esc(f.cliente)}</h2>
+          <div class="tipo">${esc(f.tipo)}</div>
+        </div>
+        <span class="badge"><span class="dot ${p&&p.soon?'pulse':''}"></span>${esc(f.status)}</span>
+      </div>
+      <div class="fm">
+        ${fmRow('fase', esc(f.fase))}
+        ${fmRow('proxima_acao', esc(f.proxima_acao), 'hl')}
+        ${fmRow('prazo', f.prazo ? `${fmt(new Date(f.prazo+'T12:00:00'))} · ${p.t}` : '', p&&p.soon?'warn':'')}
+      </div>
+      ${progHtml}
+      <div class="card-foot">
+        <span title="${esc(f.arquivo)}">${esc(f.arquivo.split('/').slice(-2).join('/'))}</span>
+        <span class="${upd!==null&&upd>7?'stale':''}">${upd===null?'':(upd===0?'atualizado hoje':`atualizado há ${upd}d`)}</span>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function timeline(){
+  const comPrazo = FRENTES.filter(f=>f.prazo).sort((a,b)=>a.prazo.localeCompare(b.prazo));
+  const el = document.getElementById('timeline');
+  if(!comPrazo.length){
+    el.innerHTML = '<li class="empty">Nenhum prazo registrado.</li>';
+    return;
+  }
+  el.innerHTML = comPrazo.map(f=>{
+    const p = rel(f.prazo);
+    return `<li>
+      <span class="when ${p.soon?'soon':''}">${fmt(new Date(f.prazo+'T12:00:00'))} · ${p.t}</span>
+      <span class="what">${esc(f.proxima_acao)}</span>
+      <span class="who">${esc(f.cliente.split(' (')[0])}</span>
+    </li>`;
+  }).join('');
+}
+
+document.getElementById('now').textContent =
+  'GERADO ' + fmt(GERADO) + ' ' + GERADO.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+document.getElementById('gen-stamp').textContent =
+  'GERADO AUTOMATICAMENTE DO VAULT · ' + GERADO.toLocaleString('pt-BR');
+kpis(); week(); filters(); grid(); timeline();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
