@@ -7,7 +7,7 @@ Uso:  python gerar_radar.py            (usa radar_config.json)
       python gerar_radar.py --no-push  (gera sem git push)
 Dependência: pip install pyyaml
 """
-import json, re, shutil, subprocess, sys
+import json, re, shutil, subprocess, sys, hashlib
 from datetime import datetime, date
 from pathlib import Path
 
@@ -103,10 +103,36 @@ for md in VAULT.rglob("*.md"):
 frentes.sort(key=lambda f: (f["status"] != "ativo", f["prazo"] or "9999-99-99", f["cliente"]))
 
 template = (BASE / "radar_template.html").read_text(encoding="utf-8")
+
+# === GATE DE MUDANÇA ===
+# Hash do que realmente importa: os dados (frentes) + o template (com placeholders).
+# O timestamp de geração NÃO entra no hash, então rodar o script sem mudança real
+# não republica nada — mata commit/deploy redundante. `--force` ignora o gate.
+payload = json.dumps(frentes, ensure_ascii=False, sort_keys=True)
+novo_hash = hashlib.sha256((payload + template).encode("utf-8")).hexdigest()[:16]
+
+def _hash_publicado(idx):
+    if not idx.exists():
+        return None
+    try:
+        m = re.search(r"radar-hash:\s*([0-9a-f]+)", idx.read_text(encoding="utf-8"))
+    except OSError:
+        return None
+    return m.group(1) if m else None
+
+forcar = "--force" in sys.argv
+hash_atual = _hash_publicado(OUT / "index.html")
+mudou = forcar or (novo_hash != hash_atual)
+
+if not mudou:
+    print(f"sem mudanças (hash {novo_hash}) · radar não republicado")
+    sys.exit(0)
+
 now = datetime.now()
 html = (
     template
     .replace("__GERADO_EM__", now.strftime("%Y-%m-%dT%H:%M:%S"))
+    .replace("__HASH__", novo_hash)
     .replace('"__FRENTES__"', json.dumps(frentes, ensure_ascii=False, indent=2))
 )
 
@@ -117,7 +143,8 @@ for f in ["manifest.json", "sw.js", "icon-192.png", "icon-512.png"]:
     if src.exists():
         shutil.copy(src, OUT / f)
 
-print(f"OK · {len(frentes)} frentes · gerado {now:%d/%m %H:%M} → {OUT / 'index.html'}")
+motivo = "forçado" if forcar else "mudança detectada"
+print(f"OK · {len(frentes)} frentes · {motivo} (hash {novo_hash}) · gerado {now:%d/%m %H:%M} → {OUT / 'index.html'}")
 
 if cfg.get("git_push") and "--no-push" not in sys.argv:
     for cmd in (["git", "add", "-A"],
