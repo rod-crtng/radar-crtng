@@ -50,7 +50,11 @@
   .day.today{border-color:var(--neon);background:var(--neon-dim)}
   .day .d{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.04em;text-align:center}
   .day.today .d{color:var(--neon);font-weight:700}
-  .ev{font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.3;border-radius:4px;padding:3px 4px;color:var(--bg);font-weight:700;background:var(--neon);overflow-wrap:break-word}
+  .ev{font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.3;border-radius:4px;padding:3px 4px;color:var(--bg);font-weight:700;background:var(--neon);overflow-wrap:break-word;cursor:pointer;text-align:left;width:100%;border:none;display:flex;align-items:center;gap:3px}
+  .ev::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--bg);flex-shrink:0;opacity:.55}
+  .ev:active{filter:brightness(1.12)}
+  .ev:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+  .week-hint{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;text-align:center;margin-top:11px}
   .filters{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 18px}
   .chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.08em;background:none;border:1px solid var(--hair);color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,color .15s}
   .chip:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
@@ -90,6 +94,24 @@
   .tl .who{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
   .tl li.empty{grid-template-columns:1fr;color:var(--faint);font-size:13px}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.08em}
+
+  .sheet-wrap{position:fixed;inset:0;z-index:50;display:none}
+  .sheet-wrap.open{display:block}
+  .sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .2s ease}
+  .sheet{position:absolute;left:0;right:0;bottom:0;max-width:1100px;margin:0 auto;background:var(--surface);border:1px solid var(--hair);border-bottom:none;border-top:3px solid var(--st-color,var(--neon));border-radius:16px 16px 0 0;padding:14px 18px calc(26px + env(safe-area-inset-bottom));max-height:86vh;overflow-y:auto;animation:slideup .26s cubic-bezier(.16,1,.3,1)}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .sheet-grip{width:38px;height:4px;border-radius:99px;background:var(--hair);margin:2px auto 16px}
+  .sheet-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;font-family:'JetBrains Mono',monospace;padding:6px 9px;border-radius:6px}
+  .sheet-close:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .sheet h2{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-.01em}
+  .sheet .tipo{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:3px}
+  .sheet-when{display:flex;justify-content:space-between;align-items:baseline;background:var(--st-bg,var(--neon-dim));border:1px solid var(--hair);border-radius:8px;padding:10px 13px;margin:13px 0}
+  .sheet-when-lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .sheet-when-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--st-color,var(--neon))}
+  .sheet .fm{margin-bottom:13px}
+  .sheet .card-foot{margin-top:14px}
+
   @media(max-width:680px){
     .week-grid{grid-template-columns:repeat(4,1fr)}
     .tl li{grid-template-columns:88px 1fr}
@@ -121,6 +143,7 @@
       <span class="sub" id="week-range"></span>
     </div>
     <div class="week-grid" id="week"></div>
+    <div class="week-hint" id="week-hint"></div>
   </section>
 
   <div class="filters" id="filters" role="group" aria-label="Filtrar por status"></div>
@@ -136,6 +159,15 @@
     <span>CRTNG · RADAR · USO INTERNO · READ-ONLY</span>
     <span id="gen-stamp"></span>
   </footer>
+</div>
+
+<div class="sheet-wrap" id="sheet-wrap" aria-hidden="true">
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detalhe da frente">
+    <button class="sheet-close" id="sheet-close" aria-label="Fechar detalhe">✕</button>
+    <div class="sheet-grip"></div>
+    <div id="sheet-body"></div>
+  </div>
 </div>
 
 <script>
@@ -161,6 +193,18 @@ const rel = iso => {
   return {t:`em ${n} dias`, soon:n<=2};
 };
 
+function progHTML(f){
+  if (!(f.progresso && f.progresso.total > 0)) return '';
+  const pct = Math.min(100, Math.round(f.progresso.atual/f.progresso.total*100));
+  return `<div class="prog">
+      <div class="row">
+        <span class="lbl">${esc(f.progresso.label)}</span>
+        <span class="frac">${f.progresso.atual}/${f.progresso.total} · ${pct}%</span>
+      </div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+    </div>`;
+}
+
 function kpis(){
   const at = FRENTES.filter(f=>f.status==='ativo').length;
   const pa = FRENTES.filter(f=>f.status==='pausado').length;
@@ -176,20 +220,23 @@ function kpis(){
 function week(){
   const DIAS = ['dom','seg','ter','qua','qui','sex','sáb'];
   const cells = [];
+  let temEvento = false;
   const fim = new Date(HOJE); fim.setDate(fim.getDate()+7);
   document.getElementById('week-range').textContent = fmt(HOJE)+' — '+fmt(fim);
   for(let i=0;i<8;i++){
     const d = new Date(HOJE); d.setDate(d.getDate()+i);
     const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    const evs = FRENTES.filter(f=>f.prazo===iso).map(f=>{
+    const evs = FRENTES.map((f,fi)=>({f,fi})).filter(o=>o.f.prazo===iso).map(({f,fi})=>{
+      temEvento = true;
       const nome = esc(f.cliente.split(' ')[0].replace('Dra.','Sandra'));
-      return `<div class="ev" title="${esc(f.proxima_acao)}">${nome}</div>`;
+      return `<button type="button" class="ev" data-fi="${fi}" aria-label="${esc(f.cliente)} — ${esc(f.proxima_acao)}">${nome}</button>`;
     }).join('');
     cells.push(`<div class="day ${i===0?'today':''}">
       <div class="d">${DIAS[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}</div>${evs}
     </div>`);
   }
   document.getElementById('week').innerHTML = cells.join('');
+  document.getElementById('week-hint').textContent = temEvento ? 'toque numa tarja pra ver do que se trata' : '';
 }
 
 let filtro = 'todos';
@@ -212,17 +259,7 @@ function grid(){
     const st = stOf(f.status);
     const p = f.prazo ? rel(f.prazo) : null;
     const upd = f.atualizado ? Math.round((HOJE-new Date(f.atualizado+'T12:00:00'))/86400000) : null;
-    let progHtml = '';
-    if (f.progresso && f.progresso.total > 0){
-      const pct = Math.min(100, Math.round(f.progresso.atual/f.progresso.total*100));
-      progHtml = `<div class="prog">
-        <div class="row">
-          <span class="lbl">${esc(f.progresso.label)}</span>
-          <span class="frac">${f.progresso.atual}/${f.progresso.total} · ${pct}%</span>
-        </div>
-        <div class="bar"><i style="width:${pct}%"></i></div>
-      </div>`;
-    }
+    const progHtml = progHTML(f);
     return `
     <article class="card" style="--st-color:${st.color};--st-bg:${st.bg}">
       <div class="card-head">
@@ -262,6 +299,61 @@ function timeline(){
     </li>`;
   }).join('');
 }
+
+function sheetHTML(f){
+  const p = f.prazo ? rel(f.prazo) : null;
+  const upd = f.atualizado ? Math.round((HOJE-new Date(f.atualizado+'T12:00:00'))/86400000) : null;
+  return `
+    <div class="card-head">
+      <div>
+        <h2>${esc(f.cliente)}</h2>
+        <div class="tipo">${esc(f.tipo)}</div>
+      </div>
+      <span class="badge"><span class="dot ${p&&p.soon?'pulse':''}"></span>${esc(f.status)}</span>
+    </div>
+    <div class="sheet-when">
+      <span class="sheet-when-lbl">Nesta data</span>
+      <span class="sheet-when-val">${f.prazo ? fmt(new Date(f.prazo+'T12:00:00'))+' · '+p.t : '—'}</span>
+    </div>
+    <div class="fm">
+      ${fmRow('o que é', esc(f.proxima_acao), 'hl')}
+      ${fmRow('fase', esc(f.fase))}
+      ${fmRow('prazo', f.prazo ? `${fmt(new Date(f.prazo+'T12:00:00'))} · ${p.t}` : '', p&&p.soon?'warn':'')}
+    </div>
+    ${progHTML(f)}
+    <div class="card-foot">
+      <span title="${esc(f.arquivo)}">${esc(f.arquivo.split('/').slice(-2).join('/'))}</span>
+      <span class="${upd!==null&&upd>7?'stale':''}">${upd===null?'':(upd===0?'atualizado hoje':`atualizado há ${upd}d`)}</span>
+    </div>`;
+}
+function openSheet(i){
+  const f = FRENTES[i];
+  if(!f) return;
+  const st = stOf(f.status);
+  const sheet = document.getElementById('sheet');
+  sheet.style.setProperty('--st-color', st.color);
+  sheet.style.setProperty('--st-bg', st.bg);
+  document.getElementById('sheet-body').innerHTML = sheetHTML(f);
+  const wrap = document.getElementById('sheet-wrap');
+  wrap.classList.add('open');
+  wrap.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  document.getElementById('sheet-close').focus();
+}
+function closeSheet(){
+  const wrap = document.getElementById('sheet-wrap');
+  wrap.classList.remove('open');
+  wrap.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+
+document.getElementById('week').addEventListener('click', e=>{
+  const el = e.target.closest('.ev');
+  if(el) openSheet(+el.dataset.fi);
+});
+document.getElementById('sheet-backdrop').addEventListener('click', closeSheet);
+document.getElementById('sheet-close').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
 
 document.getElementById('now').textContent =
   'GERADO ' + fmt(GERADO) + ' ' + GERADO.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
