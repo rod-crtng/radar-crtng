@@ -52,9 +52,13 @@
   .day.today .d{color:var(--neon);font-weight:700}
   .ev{font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.3;border-radius:4px;padding:3px 4px;color:var(--bg);font-weight:700;background:var(--neon);overflow-wrap:break-word;cursor:pointer;text-align:left;width:100%;border:none;display:flex;align-items:center;gap:3px}
   .ev::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--bg);flex-shrink:0;opacity:.55}
+  .ev.cond::after{content:'~';margin-left:auto;font-weight:700;opacity:.7}
   .ev:active{filter:brightness(1.12)}
   .ev:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
   .week-hint{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;text-align:center;margin-top:11px}
+  .week-legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:9px}
+  .week-legend .lg{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .week-legend .lg-k{width:9px;height:9px;border-radius:2px;display:inline-block}
   .filters{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 18px}
   .chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.08em;background:none;border:1px solid var(--hair);color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,color .15s}
   .chip:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
@@ -106,9 +110,11 @@
   .sheet-close:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
   .sheet h2{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-.01em}
   .sheet .tipo{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:3px}
-  .sheet-when{display:flex;justify-content:space-between;align-items:baseline;background:var(--st-bg,var(--neon-dim));border:1px solid var(--hair);border-radius:8px;padding:10px 13px;margin:13px 0}
+  .sheet-when{display:flex;justify-content:space-between;align-items:center;background:var(--st-bg,var(--neon-dim));border:1px solid var(--hair);border-radius:8px;padding:10px 13px;margin:13px 0;gap:10px}
   .sheet-when-lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
   .sheet-when-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--st-color,var(--neon))}
+  .evt-chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--bg);background:var(--evc,var(--neon));padding:4px 10px;border-radius:999px}
+  .sheet-obs{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(255,180,84,.25);border-radius:8px;padding:9px 12px;margin-bottom:13px}
   .sheet .fm{margin-bottom:13px}
   .sheet .card-foot{margin-top:14px}
 
@@ -144,6 +150,7 @@
     </div>
     <div class="week-grid" id="week"></div>
     <div class="week-hint" id="week-hint"></div>
+    <div class="week-legend" id="week-legend"></div>
   </section>
 
   <div class="filters" id="filters" role="group" aria-label="Filtrar por status"></div>
@@ -182,6 +189,15 @@ const ST = {
   encerrado:  {color:'var(--faint)', bg:'rgba(90,101,94,.12)'}
 };
 const stOf = s => ST[s] || ST.ativo;
+
+const EVT = {
+  entrega:  {color:'var(--neon)',  label:'entrega'},
+  gravacao: {color:'var(--blue)',  label:'gravação'},
+  reuniao:  {color:'var(--amber)', label:'reunião'},
+  outro:    {color:'var(--muted)', label:'evento'}
+};
+const evtOf = t => EVT[t] || EVT.outro;
+
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
 const dias = iso => Math.round((new Date(iso+'T12:00:00') - HOJE)/86400000);
@@ -205,6 +221,18 @@ function progHTML(f){
     </div>`;
 }
 
+function calendarItems(){
+  const items = [];
+  FRENTES.forEach((f,fi)=>{
+    if (Array.isArray(f.eventos) && f.eventos.length){
+      f.eventos.forEach((e,ei)=> items.push({fi, ei, data:e.data, tipo:e.tipo, titulo:e.titulo, obs:e.obs}));
+    } else if (f.prazo){
+      items.push({fi, ei:-1, data:f.prazo, tipo:'entrega', titulo:f.proxima_acao, obs:''});
+    }
+  });
+  return items;
+}
+
 function kpis(){
   const at = FRENTES.filter(f=>f.status==='ativo').length;
   const pa = FRENTES.filter(f=>f.status==='pausado').length;
@@ -219,6 +247,7 @@ function kpis(){
 
 function week(){
   const DIAS = ['dom','seg','ter','qua','qui','sex','sáb'];
+  const items = calendarItems();
   const cells = [];
   let temEvento = false;
   const fim = new Date(HOJE); fim.setDate(fim.getDate()+7);
@@ -226,10 +255,13 @@ function week(){
   for(let i=0;i<8;i++){
     const d = new Date(HOJE); d.setDate(d.getDate()+i);
     const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    const evs = FRENTES.map((f,fi)=>({f,fi})).filter(o=>o.f.prazo===iso).map(({f,fi})=>{
+    const evs = items.filter(it=>it.data===iso).map(it=>{
       temEvento = true;
+      const f = FRENTES[it.fi];
       const nome = esc(f.cliente.split(' ')[0].replace('Dra.','Sandra'));
-      return `<button type="button" class="ev" data-fi="${fi}" aria-label="${esc(f.cliente)} — ${esc(f.proxima_acao)}">${nome}</button>`;
+      const c = evtOf(it.tipo);
+      const cond = it.obs ? ' cond' : '';
+      return `<button type="button" class="ev${cond}" data-fi="${it.fi}" data-ei="${it.ei}" style="background:${c.color}" aria-label="${esc(f.cliente)} — ${esc(it.titulo||c.label)}">${nome}</button>`;
     }).join('');
     cells.push(`<div class="day ${i===0?'today':''}">
       <div class="d">${DIAS[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}</div>${evs}
@@ -237,6 +269,12 @@ function week(){
   }
   document.getElementById('week').innerHTML = cells.join('');
   document.getElementById('week-hint').textContent = temEvento ? 'toque numa tarja pra ver do que se trata' : '';
+  const tipos = [...new Set(items.map(i=>i.tipo))];
+  const order = ['gravacao','entrega','reuniao','outro'].filter(t=>tipos.includes(t));
+  document.getElementById('week-legend').innerHTML = order.length>1 ? order.map(t=>{
+    const c = evtOf(t);
+    return `<span class="lg"><span class="lg-k" style="background:${c.color}"></span>${c.label}</span>`;
+  }).join('') : '';
 }
 
 let filtro = 'todos';
@@ -300,9 +338,19 @@ function timeline(){
   }).join('');
 }
 
-function sheetHTML(f){
-  const p = f.prazo ? rel(f.prazo) : null;
+function sheetHTML(f, ev){
+  const dateIso = ev ? ev.data : f.prazo;
+  const p = dateIso ? rel(dateIso) : null;
   const upd = f.atualizado ? Math.round((HOJE-new Date(f.atualizado+'T12:00:00'))/86400000) : null;
+  const oque = ev ? (esc(ev.titulo) || '—') : esc(f.proxima_acao);
+  let lead;
+  if (ev){
+    const c = evtOf(ev.tipo);
+    lead = `<span class="evt-chip" style="--evc:${c.color}">${c.label}</span>`;
+  } else {
+    lead = `<span class="sheet-when-lbl">Nesta data</span>`;
+  }
+  const obsRow = (ev && ev.obs) ? `<div class="sheet-obs"><span>⚠</span>${esc(ev.obs)}</div>` : '';
   return `
     <div class="card-head">
       <div>
@@ -312,13 +360,13 @@ function sheetHTML(f){
       <span class="badge"><span class="dot ${p&&p.soon?'pulse':''}"></span>${esc(f.status)}</span>
     </div>
     <div class="sheet-when">
-      <span class="sheet-when-lbl">Nesta data</span>
-      <span class="sheet-when-val">${f.prazo ? fmt(new Date(f.prazo+'T12:00:00'))+' · '+p.t : '—'}</span>
+      ${lead}
+      <span class="sheet-when-val">${dateIso ? fmt(new Date(dateIso+'T12:00:00'))+' · '+p.t : '—'}</span>
     </div>
+    ${obsRow}
     <div class="fm">
-      ${fmRow('o que é', esc(f.proxima_acao), 'hl')}
+      ${fmRow('o que é', oque, 'hl')}
       ${fmRow('fase', esc(f.fase))}
-      ${fmRow('prazo', f.prazo ? `${fmt(new Date(f.prazo+'T12:00:00'))} · ${p.t}` : '', p&&p.soon?'warn':'')}
     </div>
     ${progHTML(f)}
     <div class="card-foot">
@@ -326,14 +374,15 @@ function sheetHTML(f){
       <span class="${upd!==null&&upd>7?'stale':''}">${upd===null?'':(upd===0?'atualizado hoje':`atualizado há ${upd}d`)}</span>
     </div>`;
 }
-function openSheet(i){
-  const f = FRENTES[i];
+function openSheet(fi, ei){
+  const f = FRENTES[fi];
   if(!f) return;
+  const ev = (ei>=0 && Array.isArray(f.eventos) && f.eventos[ei]) ? f.eventos[ei] : null;
   const st = stOf(f.status);
   const sheet = document.getElementById('sheet');
   sheet.style.setProperty('--st-color', st.color);
   sheet.style.setProperty('--st-bg', st.bg);
-  document.getElementById('sheet-body').innerHTML = sheetHTML(f);
+  document.getElementById('sheet-body').innerHTML = sheetHTML(f, ev);
   const wrap = document.getElementById('sheet-wrap');
   wrap.classList.add('open');
   wrap.setAttribute('aria-hidden','false');
@@ -349,7 +398,7 @@ function closeSheet(){
 
 document.getElementById('week').addEventListener('click', e=>{
   const el = e.target.closest('.ev');
-  if(el) openSheet(+el.dataset.fi);
+  if(el) openSheet(+el.dataset.fi, +el.dataset.ei);
 });
 document.getElementById('sheet-backdrop').addEventListener('click', closeSheet);
 document.getElementById('sheet-close').addEventListener('click', closeSheet);

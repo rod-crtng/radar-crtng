@@ -8,7 +8,7 @@ Uso:  python gerar_radar.py            (usa radar_config.json)
 Dependência: pip install pyyaml
 """
 import json, re, shutil, subprocess, sys
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 
 try:
@@ -32,6 +32,32 @@ def _clean(v):
 
 def _truthy(v):
     return _clean(v).lower() in ("true", "yes", "sim", "1") or v is True
+
+def _iso_date(v):
+    """Aceita date do YAML (2026-06-14) ou string e devolve 'YYYY-MM-DD'."""
+    if isinstance(v, (date, datetime)):
+        return v.isoformat()[:10]
+    return _clean(v)[:10]
+
+def _parse_eventos(raw):
+    """Normaliza o campo `eventos` (lista de {data, tipo, titulo, obs})."""
+    out = []
+    if not isinstance(raw, list):
+        return out
+    for e in raw:
+        if not isinstance(e, dict):
+            continue
+        d = _iso_date(e.get("data"))
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", d):
+            continue
+        out.append({
+            "data": d,
+            "tipo": (_clean(e.get("tipo")) or "outro").lower(),
+            "titulo": _clean(e.get("titulo")) or _clean(e.get("title")),
+            "obs": _clean(e.get("obs")),
+        })
+    out.sort(key=lambda x: x["data"])
+    return out
 
 
 if not VAULT.is_dir():
@@ -60,8 +86,9 @@ for md in VAULT.rglob("*.md"):
         "status": (_clean(fm.get("status")) or "ativo").lower(),
         "fase": _clean(fm.get("fase")),
         "proxima_acao": _clean(fm.get("proxima_acao")),
-        "prazo": _clean(fm.get("prazo")),
-        "atualizado": _clean(fm.get("atualizado")),
+        "prazo": _iso_date(fm.get("prazo")) if fm.get("prazo") else "",
+        "atualizado": _iso_date(fm.get("atualizado")) if fm.get("atualizado") else "",
+        "eventos": _parse_eventos(fm.get("eventos")),
     }
     pm = PROG_RE.match(_clean(fm.get("progresso")))
     if pm:
