@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "cmd /c echo. | ""D:\BUSINESS\Creating\RADAR_CRTNG\radar_kit\atualizar_radar.bat""", 0, False
