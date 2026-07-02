@@ -40,8 +40,13 @@ def _iso_date(v):
     return _clean(v)[:10]
 
 def _parse_eventos(raw):
-    """Normaliza o campo `eventos` (lista de {data, tipo, titulo, obs})."""
+    """Normaliza o campo `eventos` (lista YAML ou string JSON de {data, tipo, titulo, obs})."""
     out = []
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except ValueError:
+            return out
     if not isinstance(raw, list):
         return out
     for e in raw:
