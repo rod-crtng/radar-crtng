@@ -131,7 +131,7 @@
 </style>
 </head>
 <body>
-<!-- radar-hash: f182b7a90c2801c9 -->
+<!-- radar-hash: 72c5a8a260f0c5a6 -->
 <div class="wrap">
 
   <header>
@@ -184,9 +184,55 @@
 </div>
 
 <script>
-const GERADO = new Date('2026-07-10T09:32:52');
+const GERADO = new Date('2026-07-10T20:00:04');
 const HOJE = new Date(); HOJE.setHours(12,0,0,0);
 const FRENTES = [
+  {
+    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "TRM Energy",
+    "status": "ativo",
+    "fase": "Ciclo Julho · Mês 3/12 · saldo 36/60 · 3 créditos entregues no mês (todos no SLA) · próxima captação: troca boiler→fotovoltaico ter 14/07",
+    "proxima_acao": "Gravação ter 14/07 (manhã) — troca de placas boiler→fotovoltaico numa instalação (local/cliente a confirmar)",
+    "prazo": "2026-07-14",
+    "atualizado": "2026-07-10",
+    "eventos": [
+      {
+        "data": "2026-07-14",
+        "tipo": "gravacao",
+        "titulo": "Troca boiler→fotovoltaico (manhã)",
+        "obs": "instalação · local e cliente a confirmar"
+      }
+    ],
+    "progresso": {
+      "atual": 3,
+      "total": 12,
+      "label": "contrato anual"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "Vinícius Saudino",
+    "status": "ativo",
+    "fase": "Pacote High · 10 vídeos (R$ 3.600 total) · 2 entregues e aprovados (IPVA + trajetória) · 8 a definir · sex 17/07 reservada p/ gravar (tema a definir)",
+    "proxima_acao": "Sex 17/07 — data reservada pelo Vinícius p/ gravar alguns vídeos (tema e horário a confirmar; nominar os vídeos antes)",
+    "prazo": "2026-07-17",
+    "atualizado": "2026-07-10",
+    "eventos": [
+      {
+        "data": "2026-07-17",
+        "tipo": "gravacao",
+        "titulo": "Gravação Vinícius (data reservada)",
+        "obs": "tema e horário a confirmar"
+      }
+    ],
+    "progresso": {
+      "atual": 2,
+      "total": 10,
+      "label": "entregues e aprovados"
+    }
+  },
   {
     "arquivo": "09_PROJETOS/CURSO_EDUCACAO_FINANCEIRA/VISAO_GERAL.md",
     "tipo": "projeto",
@@ -231,83 +277,20 @@ const FRENTES = [
     "eventos": []
   },
   {
-    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
-    "tipo": "recorrente",
-    "cliente": "TRM Energy",
-    "status": "ativo",
-    "fase": "Ciclo Julho · Mês 3/12 · saldo 36/60 · Julho: 3 créditos entregues (informativo 06/07 + instalação Icaraí 07/07 + instalação Vitor Scalet 10/07, todos no SLA) · making off Icaraí (cortesia) ENTREGUE e postado · Vitor Scalet: painéis instalados gravados + vídeo ENTREGUE 10/07",
-    "proxima_acao": "Montar dashboard de performance (~07/08) e compartilhar projeto c/ TRM · volume por condomínio na próxima obra de Salto",
-    "prazo": "",
-    "atualizado": "2026-07-10",
-    "eventos": [
-      {
-        "data": "2026-07-07",
-        "tipo": "reuniao",
-        "titulo": "Alinhamento mensal TRM · Caio (14h–15h)",
-        "obs": "✅ feita — dashboard de performance (~1 mês), podcast mês-sim-mês-não, volume por condomínio em Salto. Ata 2026-07-07 registrada."
-      },
-      {
-        "data": "2026-07-07",
-        "tipo": "entrega",
-        "titulo": "✅ Instalação Icaraí entregue (dentro do SLA)",
-        "obs": ""
-      },
-      {
-        "data": "2026-07-08",
-        "tipo": "gravacao",
-        "titulo": "Instalação residencial · Vitor Scalet · Salto (9h)",
-        "obs": "✅ gravada 08/07 · painéis instalados gravados (captação final) · vídeo ENTREGUE 10/07"
-      },
-      {
-        "data": "2026-07-09",
-        "tipo": "entrega",
-        "titulo": "✅ Making off Icaraí entregue (cortesia)",
-        "obs": "entregue e postado · fora do crédito"
-      },
-      {
-        "data": "2026-07-10",
-        "tipo": "entrega",
-        "titulo": "✅ Vitor Scalet entregue (Salto · 1 créd)",
-        "obs": "vídeo com painéis instalados · no SLA · 3º crédito de Julho"
-      }
-    ],
-    "progresso": {
-      "atual": 3,
-      "total": 12,
-      "label": "contrato anual"
-    }
-  },
-  {
-    "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
-    "tipo": "recorrente",
-    "cliente": "Vinícius Saudino",
-    "status": "ativo",
-    "fase": "Pacote High · 10 vídeos (R$ 3.600 total) · 2 entregues e aprovados (IPVA + trajetória) · 8 a definir",
-    "proxima_acao": "Rod nominar os 8 vídeos restantes (3–10) + definir cadência de captação/entrega até setembro",
-    "prazo": "",
-    "atualizado": "2026-07-05",
-    "eventos": [],
-    "progresso": {
-      "atual": 2,
-      "total": 10,
-      "label": "entregues e aprovados"
-    }
-  },
-  {
     "arquivo": "01_CLIENTES/EVENTUAIS/MURILO_FELIX/DRA_SANDRA/VISAO_GERAL.md",
     "tipo": "eventual",
     "cliente": "Dra. Sandra Cabral (via Murilo Félix)",
     "status": "encerrando",
-    "fase": "Frente comercial encerrada 08/07 (conflito Sandra↔Murilo · contrato QUITADO R$ 2.130 · V6 entregue). Reaberta pontualmente pra uma GRAVAÇÃO DE ENCERRAMENTO de ciclo Murilo↔Sandra em 10/07 — natureza/faturamento a confirmar com Rod.",
-    "proxima_acao": "sex 10/07 10h — gravação de encerramento de ciclo Murilo↔Sandra (início no café). Confirmar com Rod se é o V8 / peça de despedida / cortesia e se é faturável.",
-    "prazo": "",
-    "atualizado": "2026-07-09",
+    "fase": "Peça de DESPEDIDA (última do pacote) gravada 10/07. Em pós — SLA de entrega até 17/07. Ao entregar, encerra o pacote e a frente. Sem faturamento novo (dentro do contrato já quitado — confirmar com Rod).",
+    "proxima_acao": "Editar e entregar até 17/07 (SLA 7 dias) a peça de despedida — última do pacote; a entrega encerra a frente.",
+    "prazo": "2026-07-17",
+    "atualizado": "2026-07-10",
     "eventos": [
       {
-        "data": "2026-07-10",
-        "tipo": "gravacao",
-        "titulo": "Dra. Sandra — encerramento de ciclo",
-        "obs": "10h · início no café · natureza a confirmar · com Murilo"
+        "data": "2026-07-17",
+        "tipo": "entrega",
+        "titulo": "Entrega peça de despedida Dra. Sandra (SLA · última do pacote)",
+        "obs": "gravada 10/07 · data-limite de entrega do vídeo finalizado"
       }
     ],
     "progresso": {
