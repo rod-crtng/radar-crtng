@@ -131,7 +131,7 @@
 </style>
 </head>
 <body>
-<!-- radar-hash: 35f548a743c37095 -->
+<!-- radar-hash: 5a4c0853aa4ae6e9 -->
 <div class="wrap">
 
   <header>
@@ -184,32 +184,9 @@
 </div>
 
 <script>
-const GERADO = new Date('2026-07-14T20:00:01');
+const GERADO = new Date('2026-07-14T21:00:03');
 const HOJE = new Date(); HOJE.setHours(12,0,0,0);
 const FRENTES = [
-  {
-    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
-    "tipo": "recorrente",
-    "cliente": "TRM Energy",
-    "status": "ativo",
-    "fase": "Ciclo Julho · Mês 3/12 · saldo 36/60 · 3 créditos entregues no mês (todos no SLA) · próxima captação: troca boiler→fotovoltaico ter 14/07",
-    "proxima_acao": "Gravação ter 14/07 (manhã) — troca de placas boiler→fotovoltaico numa instalação (local/cliente a confirmar)",
-    "prazo": "2026-07-14",
-    "atualizado": "2026-07-10",
-    "eventos": [
-      {
-        "data": "2026-07-14",
-        "tipo": "gravacao",
-        "titulo": "Troca boiler→fotovoltaico (manhã)",
-        "obs": "instalação · local e cliente a confirmar"
-      }
-    ],
-    "progresso": {
-      "atual": 3,
-      "total": 12,
-      "label": "contrato anual"
-    }
-  },
   {
     "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
     "tipo": "recorrente",
@@ -231,6 +208,29 @@ const FRENTES = [
       "atual": 2,
       "total": 10,
       "label": "entregues e aprovados"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "TRM Energy",
+    "status": "ativo",
+    "fase": "Ciclo Julho · Mês 3/12 · saldo 36/60 · 3 créditos entregues (todos no SLA) · última captação: troca boiler→fotovoltaico Indaiatuba (condomínio) 14/07 — em produção, SLA ~21/07",
+    "proxima_acao": "Entregar vídeo Indaiatuba (troca boiler→solar) — SLA até 21/07",
+    "prazo": "2026-07-21",
+    "atualizado": "2026-07-14",
+    "eventos": [
+      {
+        "data": "2026-07-21",
+        "tipo": "entrega",
+        "titulo": "Entrega Indaiatuba (SLA)",
+        "obs": "vídeo troca boiler→solar · condomínio · captado 14/07"
+      }
+    ],
+    "progresso": {
+      "atual": 3,
+      "total": 12,
+      "label": "contrato anual"
     }
   },
   {
@@ -277,24 +277,6 @@ const FRENTES = [
     "eventos": []
   },
   {
-    "arquivo": "07_COMERCIAL/LEADS/2026-07-13_CLAUDINEI_JR.md",
-    "tipo": "lead",
-    "cliente": "Claudinei Jr",
-    "status": "em conversa",
-    "fase": "Parceria recorrente — conteúdo imobiliário + branding pessoal (janela 90d até abrir empresa)",
-    "proxima_acao": "Lapidar PDF v2 (Rod+Lucas) e enviar · marcar presencial p/ mensagem única",
-    "prazo": "2026-07-13",
-    "atualizado": "2026-07-14",
-    "eventos": [
-      {
-        "data": "2026-07-13",
-        "tipo": "reuniao",
-        "titulo": "Call Claudinei Jr (corretor imobiliário)",
-        "obs": "✅ Realizada · parceria recorrente (imóveis + branding) · aguardando áudio dele p/ montar plano 90d"
-      }
-    ]
-  },
-  {
     "arquivo": "07_COMERCIAL/LEADS/2026-07-15_THAIS_SIMPLICIO.md",
     "tipo": "lead",
     "cliente": "Thaís Simplício",
@@ -309,6 +291,24 @@ const FRENTES = [
         "tipo": "reuniao",
         "titulo": "Reunião Thaís Simplício (agência mkt · Salto)",
         "obs": "10h30 · presencial · Centro, Salto · natureza a confirmar"
+      }
+    ]
+  },
+  {
+    "arquivo": "07_COMERCIAL/LEADS/2026-07-13_CLAUDINEI_JR.md",
+    "tipo": "lead",
+    "cliente": "Claudinei Jr",
+    "status": "proposta enviada",
+    "fase": "Parceria recorrente — conteúdo imobiliário + branding pessoal (janela 90d até abrir empresa)",
+    "proxima_acao": "Aguardar feedback do PDF v2 (enviado 14/07) · follow-up 2d leve / 5d direto / 10d perdido · marcar presencial Etapa 1",
+    "prazo": "2026-07-16",
+    "atualizado": "2026-07-14",
+    "eventos": [
+      {
+        "data": "2026-07-13",
+        "tipo": "reuniao",
+        "titulo": "Call Claudinei Jr (corretor imobiliário)",
+        "obs": "✅ call feita · PDF v2 (marca audiovisual) ENVIADO 14/07 · aguardando feedback"
       }
     ]
   },
