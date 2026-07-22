@@ -131,7 +131,7 @@
 </style>
 </head>
 <body>
-<!-- radar-hash: 4dfc3f817b97b973 -->
+<!-- radar-hash: ffdf5c539f007ad5 -->
 <div class="wrap">
 
   <header>
@@ -184,53 +184,59 @@
 </div>
 
 <script>
-const GERADO = new Date('2026-07-21T21:00:01');
+const GERADO = new Date('2026-07-22T00:41:01');
 const HOJE = new Date(); HOJE.setHours(12,0,0,0);
 const FRENTES = [
-  {
-    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
-    "tipo": "recorrente",
-    "cliente": "TRM Energy",
-    "status": "ativo",
-    "fase": "Ciclo Julho · Mês 3/12 · saldo 36/60 · 3 créditos entregues (todos no SLA) · última captação: troca boiler→fotovoltaico Indaiatuba (condomínio) 14/07 — em produção, SLA ~21/07",
-    "proxima_acao": "Entregar vídeo Indaiatuba (troca boiler→solar) — SLA até 21/07",
-    "prazo": "2026-07-21",
-    "atualizado": "2026-07-14",
-    "eventos": [
-      {
-        "data": "2026-07-21",
-        "tipo": "entrega",
-        "titulo": "Entrega Indaiatuba (SLA)",
-        "obs": "vídeo troca boiler→solar · condomínio · captado 14/07"
-      }
-    ],
-    "progresso": {
-      "atual": 3,
-      "total": 12,
-      "label": "contrato anual"
-    }
-  },
   {
     "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
     "tipo": "recorrente",
     "cliente": "Vinícius Saudino",
     "status": "ativo",
-    "fase": "Pacote High · 10 vídeos (R$ 3.600) · 4 entregues (01/02 + apoio Rita 07 + highlights 08) · ciclo 2 captado (05 em 16/07 · 03+04+06 em 17/07 · evento Rita em 18/07) · em edição · tudo consome o pacote",
-    "proxima_acao": "Editar e entregar ciclo 2 até ~25/07 · produzir vídeo 09 (Vinícius se apresentando, do evento) · resta 10 a nominar",
+    "fase": "Pacote High · 10 vídeos (R$ 3.600) · 6 entregues (01/02/07/08 + 04 dep. federal + 05 comércio) · 03 mounjaro finalizado, falta enviar · 06 e 09 na fila · tudo consome o pacote",
+    "proxima_acao": "Enviar o 03 (mounjaro) · fazer a alteração pedida no 04 (deputado federal) · produzir 06 e 09 · resta 10 a nominar",
     "prazo": "2026-07-25",
-    "atualizado": "2026-07-21",
+    "atualizado": "2026-07-22",
     "eventos": [
       {
         "data": "2026-07-25",
         "tipo": "entrega",
-        "titulo": "Entregar ciclo 2 — Vinícius",
-        "obs": "03 Mounjaro + 04 Deputado + extra Deputado curto + 05 Imóveis + vídeo do discurso/evento · SLA 7d desde a captação de 18/07"
+        "titulo": "Fechar ciclo 2 — Vinícius",
+        "obs": "enviar 03 mounjaro (finalizado) + alteração pedida no 04 deputado federal + produzir 06 e 09"
+      }
+    ],
+    "progresso": {
+      "atual": 6,
+      "total": 10,
+      "label": "entregues (01, 02, 07, 08 + 04 deputado federal + 05 comércio) · 03 mounjaro finalizado aguardando envio · 06 curta e 09 (se apresentando) na fila · resta 10 a nominar"
+    }
+  },
+  {
+    "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "TRM Energy",
+    "status": "ativo",
+    "fase": "Ciclo Julho · Mês 3/12 · 4 créditos entregues (todos no SLA) · Indaiatuba (troca boiler→solar) entregue · próxima captação: drone no Central Park 22/07",
+    "proxima_acao": "Gravar drone no Central Park 22/07 08:30 (aérea das +42 casas instaladas) · entregar até 29/07 pelo SLA",
+    "prazo": "2026-07-29",
+    "atualizado": "2026-07-22",
+    "eventos": [
+      {
+        "data": "2026-07-22",
+        "tipo": "gravacao",
+        "titulo": "Drone — Central Park",
+        "obs": "08:30 · aérea das +42 casas instaladas no bairro · vídeo de presença"
+      },
+      {
+        "data": "2026-07-29",
+        "tipo": "entrega",
+        "titulo": "Entrega Central Park (SLA)",
+        "obs": "SLA 7d a partir da captação de 22/07"
       }
     ],
     "progresso": {
       "atual": 4,
-      "total": 10,
-      "label": "entregues (01, 02, 07 apoio Rita, 08 highlights) · 03/04/05/06 em edição · 09 (se apresentando) a produzir · resta 10 a nominar"
+      "total": 12,
+      "label": "contrato anual"
     }
   },
   {
