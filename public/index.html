@@ -131,7 +131,7 @@
 </style>
 </head>
 <body>
-<!-- radar-hash: 731ed3fa000e7d3e -->
+<!-- radar-hash: 2d3be08aa452504e -->
 <div class="wrap">
 
   <header>
@@ -184,38 +184,9 @@
 </div>
 
 <script>
-const GERADO = new Date('2026-08-01T18:54:20');
+const GERADO = new Date('2026-08-04T09:32:50');
 const HOJE = new Date(); HOJE.setHours(12,0,0,0);
 const FRENTES = [
-  {
-    "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
-    "tipo": "recorrente",
-    "cliente": "Vinícius Saudino",
-    "status": "ativo",
-    "fase": "Pacote High · 9/10 entregues · convenção 01/08 captada: 2 conteúdos em edição (1 fecha o pacote) · SLA 08/08",
-    "proxima_acao": "Reunião no escritório dele 03/08 14h30 (nomina os 2 vídeos + define o novo ciclo) · editar os 2 conteúdos da convenção · entregar até 08/08",
-    "prazo": "2026-08-03",
-    "atualizado": "2026-08-01",
-    "eventos": [
-      {
-        "data": "2026-08-03",
-        "tipo": "reuniao",
-        "titulo": "Reuniao Vinicius (escritorio)",
-        "obs": "14h30 no escritorio dele · nominar os 2 videos da convencao + definir o novo ciclo (~mais 10 a confirmar) + cadencia ate setembro"
-      },
-      {
-        "data": "2026-08-08",
-        "tipo": "entrega",
-        "titulo": "Entrega convenção (Vinícius)",
-        "obs": "SLA 7 dias da gravacao 01/08 · 2 conteudos · edicao a partir de segunda 03/08 · 1 deles fecha o video 10 do pacote"
-      }
-    ],
-    "progresso": {
-      "atual": 9,
-      "total": 10,
-      "label": "entregues · 2 captados na convenção 01/08, em edição (SLA 08/08)"
-    }
-  },
   {
     "arquivo": "01_CLIENTES/TRM_ENERGY/LOG_PRODUCAO.md",
     "tipo": "recorrente",
@@ -256,6 +227,36 @@ const FRENTES = [
       "total": 12,
       "label": "contrato anual"
     }
+  },
+  {
+    "arquivo": "01_CLIENTES/VINICIUS_SAUDINO/LOG_PRODUCAO.md",
+    "tipo": "recorrente",
+    "cliente": "Vinícius Saudino",
+    "status": "ativo",
+    "fase": "Pacote 1: 9/10 · falta o vídeo 10 (SLA 08/08) · Pacote 2 FECHADO 03/08 (10 vídeos · R$ 3.600)",
+    "proxima_acao": "Entregar o vídeo 10 até 08/08 — fecha o pacote 1 em 10/10 e dispara o status PDF · definir a cadência do pacote 2",
+    "prazo": "2026-08-08",
+    "atualizado": "2026-08-04",
+    "eventos": [
+      {
+        "data": "2026-08-03",
+        "tipo": "reuniao",
+        "titulo": "Reunião Vinícius (escritório)",
+        "obs": "✅ RETORNO 03/08: 2º contrato de 10 vídeos fechado (R$ 3.600) + adiantamento de R$ 100 · falta 1 vídeo pra encerrar o pacote 1 · saldo total R$ 6.700 pra fim de agosto/início de setembro (fundo eleitoral)"
+      },
+      {
+        "data": "2026-08-08",
+        "tipo": "entrega",
+        "titulo": "Vídeo 10 — fecha o pacote 1",
+        "obs": "SLA 7 dias da convenção de 01/08 · sai do bruto da convenção · o 2º conteúdo abre o pacote 2"
+      },
+      {
+        "data": "2026-08-31",
+        "tipo": "pagamento",
+        "titulo": "Saldo Vinícius — R$ 6.700",
+        "obs": "R$ 3.100 (pacote 1) + R$ 3.600 (pacote 2) · janela fim de agosto → início de setembro, conforme o fundo eleitoral liberar · maior exposição a receber da CRTNG"
+      }
+    ]
   },
   {
     "arquivo": "09_PROJETOS/CURSO_EDUCACAO_FINANCEIRA/VISAO_GERAL.md",
